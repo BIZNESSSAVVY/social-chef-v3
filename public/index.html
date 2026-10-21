@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#faf9f6">
+<title>Social Chef — Create and publish your food specials</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js" defer></script>
+<script src="config.js" defer></script><script src="app.js" type="module"></script>
+</head>
+<body>
+<header class="header"><a class="brand" href="./">Social Chef<span>●</span></a><div class="header-tools"><button id="nav-create" class="text-button" hidden>Back to create</button><details class="menu"><summary>More</summary><div class="menu-items"><button id="nav-drafts" class="text-button">Saved drafts (<span id="draft-count">0</span>)</button><button id="sample" class="text-button">Try an example</button><button id="account-button" class="text-button">Sign in</button></div></details></div></header>
+<main>
+<div class="intro"><div><p class="eyebrow">A FRESH TAKE ON YOUR NEXT POST</p><h1>Good food. Great stories.</h1><p>Add your details. Find your words. Share your special.</p></div><div class="intro-art" aria-hidden="true"><span class="art-spark">✦</span><span class="art-plate">sc</span><span class="art-leaf">❧</span></div></div>
+<div class="inspiration"><span>What’s on the menu?</span><button type="button" data-category="Lunch Special">Lunch specials</button><button type="button" data-category="Weekend Brunch">Weekend brunch</button><button type="button" data-category="Food Truck Stop">Food truck stops</button><button type="button" data-category="Behind the Scenes">Kitchen stories</button></div>
+<section id="create-view" class="editor-grid">
+<div class="card composer">
+<div class="section-heading"><span class="step">1</span><h2>Create your post</h2></div>
+<form id="post-form">
+<div class="row"><label for="category">Special type<select id="category" name="category"><option selected>Daily Special</option></select></label><label for="tone">Post style<select name="tone" id="tone"><option value="friendly">Friendly</option><option value="playful">Fun</option><option value="bold">Bold</option><option value="classic">Elegant</option><option value="trendy">Trendy</option><option value="direct">Short & direct</option></select></label></div>
+<label for="description">Describe your special<textarea id="description" name="description" maxlength="1500" rows="4" placeholder="e.g. Fish tacos with mango salsa. $14 this Tuesday, 12–8 PM." required></textarea></label><span id="input-count" class="sr-only">0 / 1500</span>
+<div class="photo-heading"><label for="photo">Add a photo <span class="optional">optional</span></label><button id="remove-photo" class="text-button" type="button" hidden>Remove</button></div>
+<label class="upload" for="photo"><span id="upload-label"><strong>＋ Choose food photo</strong><small>JPG, PNG or WebP · up to 5 MB</small></span><img id="upload-thumb" alt="Selected food photo" hidden><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<details class="extra-details"><summary>Post options <span class="optional">optional</span></summary><div class="row"><label for="creation-mode">Create with<select id="creation-mode"><option value="instant" selected>Instant templates</option><option value="auto">AI + template backup</option></select></label><label for="post-length">Caption length<select id="post-length"><option value="standard">Standard</option><option value="short">Short</option></select></label></div><div class="checkboxes"><label><input id="use-emojis" type="checkbox" checked> Add an emoji</label><label><input id="use-hashtags" type="checkbox" checked> Add hashtags</label><label><input id="original-style" type="checkbox"> Include original high-energy templates</label></div><label for="restaurant">Restaurant name<input name="restaurant" id="restaurant" maxlength="80" placeholder="Your restaurant"></label><label for="cta">Call to action<select id="cta" name="cta"><option>Stop by and try it</option><option value="">No extra call to action</option><option>Join the conversation</option><option>Order online</option><option>Book a table</option><option>Tell us your favorite</option></select></label><label for="link">Website or ordering link<input type="url" id="link" name="link" maxlength="400" placeholder="https://your-restaurant.com"></label></details>
+<select id="platform" name="platform" hidden aria-label="Platform"><option>Facebook</option></select>
+<button id="generate" class="button primary full" type="submit">Generate Post</button><p id="generation-note" class="micro">A fresh template each time · remembers your last 30 on this browser.</p>
+</form></div>
+<div class="card preview-card">
+<div class="section-heading"><span class="step">2</span><h2>Review & publish</h2></div>
+<div class="preview-content">
+<div class="facebook-connection"><div class="connection-top"><span id="facebook-status" role="status">Connect your Facebook Page to publish.</span><button id="connect-facebook" class="button secondary">Connect Facebook</button></div><label id="page-label" class="page-label" for="facebook-page" hidden>Choose your Page<select id="facebook-page" disabled><option value="">Connect to choose a Page</option></select></label></div>
+<div class="post"><div class="post-header"><div id="avatar" class="avatar">SC</div><div><strong id="preview-name">Your restaurant</strong><small id="preview-meta">Facebook post preview</small></div></div><label class="sr-only" for="post-text">Edit your generated post</label><textarea id="post-text" placeholder="Your post will appear here. Add your details and click Generate Post." maxlength="5000" rows="7"></textarea><div id="image-empty" hidden></div><img id="post-image" class="post-image" alt="Your selected food photo" hidden></div>
+<div class="preview-meta"><span id="output-source">Preview</span><span id="output-count">0 characters</span></div>
+<button id="publish-facebook" class="button facebook full" disabled>Publish to Facebook</button><p id="publish-note" class="micro">Your caption and photo are posted together.</p><a id="published-link" target="_blank" rel="noopener noreferrer" hidden>View your Facebook post ↗</a>
+<div class="secondary-tools"><button id="regenerate" class="text-button" type="button" disabled>Try another version</button><details><summary>Save or copy</summary><div class="actions"><button id="save" class="button secondary" disabled>Save draft</button><button id="copy" class="button secondary" disabled>Copy text</button><button id="download" class="button secondary" disabled>Download text</button></div></details></div>
+<span id="status-text" class="sr-only">Add your special to get started</span><span id="mode" hidden>AI post composer</span>
+</div></div>
+</section>
+<section id="drafts-view" hidden><div class="draft-heading"><h2>Saved drafts</h2><button id="new-post" class="button primary">Create a new post</button></div><div id="drafts-list" class="drafts-list"></div></section>
+</main>
+<footer>Social Chef · Built by Bizness Savvy</footer>
+<dialog id="account-dialog"><form id="auth-form"><h2>Sign in</h2><label>Email<input id="auth-email" type="email" autocomplete="email" required></label><label>Password<input id="auth-password" type="password" autocomplete="current-password" minlength="6" required></label><div class="actions"><button class="button primary" type="submit">Sign in</button><button id="sign-up" class="button secondary" type="button">Create account</button><button id="close-auth" class="text-button" type="button">Close</button></div></form></dialog>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+</body></html>
